@@ -1,5 +1,7 @@
 import whisper
 import os
+import subprocess
+import shutil
 from typing import Optional
 
 class WhisperService:
@@ -10,6 +12,7 @@ class WhisperService:
         """
         self.model_size = model_size
         self.model = None
+        self.ffmpeg_path = self._find_ffmpeg_path()
         
     async def load_model(self):
         """Whisper 모델 로드"""
@@ -34,6 +37,13 @@ class WhisperService:
         
         await self.load_model()
         
+        # FFmpeg 경로 설정
+        if self.ffmpeg_path:
+            os.environ['PATH'] = f"{os.path.dirname(self.ffmpeg_path)}:{os.environ.get('PATH', '')}"
+            print(f"Using FFmpeg at: {self.ffmpeg_path}")
+        else:
+            raise Exception("FFmpeg를 찾을 수 없습니다. brew install ffmpeg로 설치해주세요.")
+        
         try:
             print(f"Transcribing audio file: {audio_file_path}")
             
@@ -52,6 +62,24 @@ class WhisperService:
         except Exception as e:
             print(f"Transcription error: {e}")
             raise Exception(f"음성 인식 중 오류가 발생했습니다: {str(e)}")
+    
+    def _find_ffmpeg_path(self) -> Optional[str]:
+        """FFmpeg 실행파일 경로를 찾습니다"""
+        # 일반적인 FFmpeg 설치 경로들
+        common_paths = [
+            "/opt/homebrew/bin/ffmpeg",     # Apple Silicon Mac Homebrew
+            "/usr/local/bin/ffmpeg",        # Intel Mac Homebrew
+            "/usr/bin/ffmpeg",              # Linux 시스템 경로
+            shutil.which("ffmpeg")          # PATH에서 찾기
+        ]
+        
+        for path in common_paths:
+            if path and os.path.exists(path) and os.path.isfile(path):
+                print(f"Found FFmpeg at: {path}")
+                return path
+        
+        print("FFmpeg not found in common paths")
+        return None
     
     def get_supported_languages(self):
         """지원되는 언어 목록 반환"""

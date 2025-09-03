@@ -109,11 +109,17 @@ class AudioProcessor:
         """요약 메타데이터 생성"""
         from datetime import datetime
         
-        type_name = "강의" if processing_type == ProcessingType.LECTURE else "회의"
+        if processing_type == ProcessingType.LECTURE:
+            type_name = "강의"
+            title = "강의 요약"
+        else:  # ProcessingType.MEETING
+            type_name = "회의"
+            title = "회의록"
+            
         current_time = datetime.now().strftime("%Y년 %m월 %d일 %H:%M")
         service_mode = "실제 AI 모델" if self.use_real_services else "데모 모드"
         
-        return f"""# {type_name} 요약
+        return f"""# {title}
 
 **생성 일시**: {current_time}  
 **처리 유형**: {type_name}  

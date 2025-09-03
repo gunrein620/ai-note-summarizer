@@ -182,8 +182,17 @@ async def process_audio_task(task_id: str):
         
     except Exception as e:
         processing_tasks[task_id]["status"] = "failed"
+        processing_tasks[task_id]["progress"] = 0
         processing_tasks[task_id]["message"] = f"처리 중 오류 발생: {str(e)}"
         print(f"Processing error for task {task_id}: {e}")
+        
+        # 에러 발생 시 좀 더 구체적인 정보 제공
+        if "ffmpeg" in str(e).lower():
+            processing_tasks[task_id]["message"] = "FFmpeg 오류: 음성 파일 처리 중 문제가 발생했습니다. 다시 시도해주세요."
+        elif "whisper" in str(e).lower() or "model" in str(e).lower():
+            processing_tasks[task_id]["message"] = "음성 인식 모델 오류: 오디오 파일을 확인하고 다시 시도해주세요."
+        elif "ollama" in str(e).lower():
+            processing_tasks[task_id]["message"] = "AI 요약 생성 오류: Ollama 서비스를 확인하고 다시 시도해주세요."
 
 if __name__ == "__main__":
     import uvicorn

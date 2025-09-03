@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { getResultContent, downloadResult } from '../services/api'
+import { getResultContent, downloadResult, getProcessingStatus } from '../services/api'
 
 const ResultViewer = ({ taskId, onStartNew }) => {
   const [content, setContent] = useState('')
+  const [transcript, setTranscript] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [viewMode, setViewMode] = useState('preview') // 'preview' or 'raw'
+  const [viewMode, setViewMode] = useState('preview') // 'preview', 'raw', 'transcript'
+  const [showTranscript, setShowTranscript] = useState(false)
 
   useEffect(() => {
     const fetchResult = async () => {
       try {
         setLoading(true)
-        const resultContent = await getResultContent(taskId)
+        
+        // 결과 내용과 transcript 동시에 가져오기
+        const [resultContent, statusData] = await Promise.all([
+          getResultContent(taskId),
+          getProcessingStatus(taskId)
+        ])
+        
         setContent(resultContent)
+        setTranscript(statusData.transcript || '음성 전사 결과를 찾을 수 없습니다.')
       } catch (err) {
         console.error('Failed to fetch result:', err)
         setError('결과를 불러오는데 실패했습니다.')
@@ -36,8 +45,8 @@ const ResultViewer = ({ taskId, onStartNew }) => {
     }
   }
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(content)
+  const copyToClipboard = (text = content) => {
+    navigator.clipboard.writeText(text)
       .then(() => alert('클립보드에 복사되었습니다!'))
       .catch(() => alert('복사에 실패했습니다.'))
   }
@@ -90,10 +99,17 @@ const ResultViewer = ({ taskId, onStartNew }) => {
         </button>
         
         <button
-          onClick={copyToClipboard}
+          onClick={() => copyToClipboard()}
           className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
         >
           📋 복사
+        </button>
+        
+        <button
+          onClick={() => setShowTranscript(!showTranscript)}
+          className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors"
+        >
+          🎤 {showTranscript ? 'STT 숨기기' : 'STT 보기'}
         </button>
         
         <button
@@ -103,6 +119,36 @@ const ResultViewer = ({ taskId, onStartNew }) => {
           🆕 새로 시작
         </button>
       </div>
+
+      {/* STT 결과 표시 */}
+      {showTranscript && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center">
+              <span className="text-blue-700 font-medium text-lg">🎤 음성 전사 결과</span>
+              <span className="ml-2 text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                {transcript.length.toLocaleString()} 글자
+              </span>
+            </div>
+            <button
+              onClick={() => copyToClipboard(transcript)}
+              className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+            >
+              📋 STT 복사
+            </button>
+          </div>
+          
+          <div className="bg-white border border-blue-200 rounded p-4 max-h-60 overflow-y-auto">
+            <pre className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed font-normal">
+              {transcript}
+            </pre>
+          </div>
+          
+          <div className="text-xs text-blue-600 mt-3">
+            💡 이 텍스트를 바탕으로 위의 AI 요약이 생성되었습니다.
+          </div>
+        </div>
+      )}
 
       {/* 내용 표시 */}
       <div className="border rounded-lg overflow-hidden">

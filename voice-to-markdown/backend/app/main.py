@@ -50,8 +50,22 @@ async def upload_audio(
     file: UploadFile = File(...),
     processing_type: ProcessingType = ProcessingType.LECTURE
 ):
-    if not file.content_type.startswith('audio/'):
-        raise HTTPException(status_code=400, detail="오디오 파일만 업로드 가능합니다")
+    # 파일 타입 검증 개선 (더 관대한 검증)
+    allowed_types = [
+        'audio/', 'video/webm', 'video/mp4', 'video/quicktime',
+        'application/octet-stream'  # 일부 브라우저에서 오디오 파일을 이렇게 전송
+    ]
+    
+    # 파일 확장자로도 검증
+    allowed_extensions = ['.mp3', '.wav', '.webm', '.m4a', '.mp4', '.aac', '.ogg', '.flac']
+    file_extension = os.path.splitext(file.filename or '')[1].lower()
+    
+    is_valid_type = any(file.content_type.startswith(t) for t in allowed_types) if file.content_type else False
+    is_valid_extension = file_extension in allowed_extensions
+    
+    if not (is_valid_type or is_valid_extension):
+        print(f"Invalid file - Content-Type: {file.content_type}, Extension: {file_extension}, Filename: {file.filename}")
+        raise HTTPException(status_code=400, detail=f"지원하지 않는 파일 형식입니다. 업로드된 파일: {file.content_type or 'Unknown'} (.{file_extension})")
     
     # 고유 task ID 생성
     task_id = str(uuid.uuid4())

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import TypeSelector from './components/TypeSelector'
 import AudioRecorder from './components/AudioRecorder'
+import FileUploader from './components/FileUploader'
 import ProcessingStatus from './components/ProcessingStatus'
 import ResultViewer from './components/ResultViewer'
 import WebSocketService from './services/websocket'
@@ -9,6 +10,7 @@ import { uploadAudio, getProcessingStatus } from './services/api'
 function App() {
   const [currentStep, setCurrentStep] = useState('ready') // ready, recording, processing, completed
   const [processingType, setProcessingType] = useState('lecture')
+  const [inputMode, setInputMode] = useState('record') // record, upload
   const [taskId, setTaskId] = useState(null)
   const [processingStatus, setProcessingStatus] = useState({
     status: 'pending',
@@ -102,6 +104,11 @@ function App() {
     wsService.disconnect()
   }
 
+  // 파일 업로드 핸들러 (녹음과 동일한 로직 사용)
+  const handleFileUpload = (audioFile) => {
+    handleRecordingComplete(audioFile)
+  }
+
   const renderContent = () => {
     switch (currentStep) {
       case 'ready':
@@ -111,9 +118,43 @@ function App() {
               selectedType={processingType}
               onTypeChange={setProcessingType}
             />
-            <AudioRecorder 
-              onRecordingComplete={handleRecordingComplete}
-            />
+            
+            {/* 입력 방식 선택 탭 */}
+            <div className="flex justify-center">
+              <div className="inline-flex bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setInputMode('record')}
+                  className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                    inputMode === 'record'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  🎤 음성 녹음
+                </button>
+                <button
+                  onClick={() => setInputMode('upload')}
+                  className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                    inputMode === 'upload'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  📁 파일 업로드
+                </button>
+              </div>
+            </div>
+
+            {/* 선택된 입력 방식에 따른 컴포넌트 렌더링 */}
+            {inputMode === 'record' ? (
+              <AudioRecorder 
+                onRecordingComplete={handleRecordingComplete}
+              />
+            ) : (
+              <FileUploader 
+                onFileUpload={handleFileUpload}
+              />
+            )}
           </div>
         )
       
@@ -149,7 +190,7 @@ function App() {
             Voice to Markdown
           </h1>
           <p className="text-gray-600">
-            음성을 녹음하고 AI로 구조화된 Markdown 요약을 생성하세요
+            음성을 녹음하거나 오디오 파일을 업로드하여 AI로 구조화된 Markdown 요약을 생성하세요
           </p>
           
           {/* 현재 단계 표시 */}
@@ -178,7 +219,7 @@ function App() {
         {/* 푸터 */}
         <footer className="text-center mt-8 text-sm text-gray-500">
           <p>Powered by Whisper + Llama 3.1 8B</p>
-          <p className="mt-1">🎤 음성 → 📝 텍스트 → 🤖 AI 요약 → 📋 Markdown</p>
+          <p className="mt-1">🎤 음성/📁 파일 → 📝 텍스트 → 🤖 AI 요약 → 📋 Markdown</p>
         </footer>
       </div>
     </div>

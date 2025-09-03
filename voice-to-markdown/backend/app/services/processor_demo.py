@@ -17,7 +17,7 @@ from ..models.schemas import ProcessingType
 class AudioProcessor:
     def __init__(self):
         """오디오 처리 서비스 통합 클래스"""
-        self.whisper_service = WhisperService(model_size="base")
+        self.whisper_service = WhisperService(model_size="medium")
         self.ollama_service = OllamaService()
         self.use_real_services = USE_REAL_SERVICES
         

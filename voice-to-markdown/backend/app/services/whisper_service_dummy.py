@@ -31,8 +31,10 @@ class WhisperService:
         try:
             print(f"[DUMMY] Transcribing audio file: {audio_file_path}")
             
-            # 더미 음성 인식 시뮬레이션
-            await asyncio.sleep(2)  # 처리 시뮬레이션
+            # 더미 음성 인식 시뮬레이션 (더 긴 시간)
+            await asyncio.sleep(1)  # 초기 처리
+            await asyncio.sleep(1)  # 중간 처리
+            await asyncio.sleep(1)  # 최종 처리
             
             # 더미 텍스트 반환 (강의/회의 예시)
             dummy_transcript = """

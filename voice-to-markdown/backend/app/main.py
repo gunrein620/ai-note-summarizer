@@ -153,24 +153,51 @@ async def process_audio_task(task_id: str):
         task = processing_tasks[task_id]
         processor = app.state.audio_processor
         
-        # STT 처리
+        # 업로드 완료 상태 표시
+        task["status"] = "uploading"
+        task["progress"] = 10
+        task["message"] = "파일 업로드 완료, 처리 준비 중..."
+        await asyncio.sleep(0.5)  # WebSocket이 상태를 전달할 시간 제공
+        
+        # STT 처리 시작
         task["status"] = "transcribing"
-        task["progress"] = 25
+        task["progress"] = 20
         task["message"] = "음성을 텍스트로 변환 중..."
+        await asyncio.sleep(0.5)  # WebSocket이 상태를 전달할 시간 제공
+        
+        # STT 처리 중 진행률 업데이트
+        for progress in range(25, 50, 5):
+            task["progress"] = progress
+            task["message"] = f"음성 인식 진행 중... ({progress}%)"
+            await asyncio.sleep(0.3)
         
         transcript = await processor.transcribe_audio(task["file_path"])
         
-        # STT 결과 저장
+        # STT 완료
+        task["progress"] = 50
+        task["message"] = "음성 인식 완료!"
         task["transcript"] = transcript
+        await asyncio.sleep(0.5)
         
-        # AI 요약 처리
+        # AI 요약 처리 시작
         task["status"] = "summarizing"
-        task["progress"] = 75
+        task["progress"] = 55
         task["message"] = "AI로 요약 생성 중..."
+        await asyncio.sleep(0.5)
+        
+        # AI 요약 처리 중 진행률 업데이트
+        for progress in range(60, 90, 5):
+            task["progress"] = progress
+            task["message"] = f"AI 요약 생성 중... ({progress}%)"
+            await asyncio.sleep(0.3)
         
         summary = await processor.generate_summary(transcript, task["processing_type"])
         
         # 결과 파일 저장
+        task["progress"] = 95
+        task["message"] = "결과 파일 저장 중..."
+        await asyncio.sleep(0.2)
+        
         result_path = f"results/{task_id}.md"
         with open(result_path, "w", encoding="utf-8") as f:
             f.write(summary)

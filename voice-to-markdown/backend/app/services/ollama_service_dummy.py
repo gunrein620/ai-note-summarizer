@@ -25,8 +25,10 @@ class OllamaService:
         try:
             print(f"[DUMMY] Generating summary with Ollama for {content_type}")
             
-            # AI 처리 시뮬레이션
-            await asyncio.sleep(3)
+            # AI 처리 시뮬레이션 (더 긴 시간)
+            await asyncio.sleep(1.5)  # 초기 분석
+            await asyncio.sleep(1.5)  # 요약 생성
+            await asyncio.sleep(1)    # 최종 포맷팅
             
             # 더미 요약 생성
             if content_type == "lecture":

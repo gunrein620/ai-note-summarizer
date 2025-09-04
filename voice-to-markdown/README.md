@@ -1,3 +1,26 @@
+## 간단 시작 (3단계)
+
+### **사전 준비**
+```bash
+# 1. Conda 가상환경 활성화
+conda activate voice-to-markdown
+```
+
+### 🎯 **서버 실행**
+```bash
+# 2. 루트 디렉토리에서 한 번에 모든 서버 시작
+cd voice-to-markdown
+npm start
+```
+#### 💻 **PC에서 접속**
+http://localhost:5173
+
+#### 📱 **모바일및 외부 접속**
+1. **QR 코드 스캔**: 콘솔에 표시된 QR 코드를 휴대폰 카메라로 스캔
+2. **URL 직접 입력**: ngrok URL을 휴대폰 브라우저에 입력
+   ```
+   예: https://abc123.ngrok-free.app
+   ```
 
 
 # Voice to Markdown 요약 웹앱

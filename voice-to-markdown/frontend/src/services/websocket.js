@@ -5,7 +5,21 @@ class WebSocketService {
   }
 
   connect(taskId, onMessage, onError = null, onClose = null) {
-    const wsUrl = `ws://localhost:8000/ws/${taskId}`
+    // 현재 호스트에 맞춰 WebSocket URL 동적 설정
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    
+    let wsUrl
+    // ngrok이나 다른 프록시 환경에서는 같은 도메인 사용
+    if (window.location.hostname.includes('ngrok') || 
+        window.location.hostname.includes('app') ||
+        window.location.port === '') {
+      // ngrok이나 배포 환경에서는 /api/ws 경로 사용
+      wsUrl = `${protocol}//${window.location.host}/api/ws/${taskId}`
+    } else {
+      // 로컬 개발 환경에서는 백엔드 포트 직접 사용
+      const hostname = window.location.hostname
+      wsUrl = `${protocol}//${hostname}:8000/ws/${taskId}`
+    }
     
     this.ws = new WebSocket(wsUrl)
     

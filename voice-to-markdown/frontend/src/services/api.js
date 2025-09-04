@@ -1,9 +1,23 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8000'
+// 현재 호스트에 맞춰 API URL 동적 설정
+const getAPIBaseURL = () => {
+  // ngrok이나 다른 프록시 환경에서는 같은 도메인 사용
+  if (window.location.hostname.includes('ngrok') || 
+      window.location.hostname.includes('app') ||
+      window.location.port === '') {
+    // ngrok이나 배포 환경에서는 /api 경로 사용
+    return `${window.location.protocol}//${window.location.host}/api`
+  }
+  
+  // 로컬 개발 환경에서는 백엔드 포트 직접 사용
+  const protocol = window.location.protocol
+  const hostname = window.location.hostname
+  return `${protocol}//${hostname}:8000`
+}
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getAPIBaseURL(),
   timeout: 300000, // 5분 타임아웃
 })
 

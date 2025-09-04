@@ -119,25 +119,25 @@ function App() {
               onTypeChange={setProcessingType}
             />
             
-            {/* 입력 방식 선택 탭 */}
+            {/* 입력 방식 선택 탭 - 다크 테마 */}
             <div className="flex justify-center">
-              <div className="inline-flex bg-gray-100 rounded-lg p-1">
+              <div className="inline-flex bg-gray-700/50 backdrop-blur-sm rounded-xl p-1.5 shadow-lg border border-gray-600/30">
                 <button
                   onClick={() => setInputMode('record')}
-                  className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                  className={`px-8 py-3 rounded-lg font-medium transition-all duration-300 transform ${
                     inputMode === 'record'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105 hover:shadow-xl'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-600/50 hover:scale-105'
                   }`}
                 >
                   🎤 음성 녹음
                 </button>
                 <button
                   onClick={() => setInputMode('upload')}
-                  className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                  className={`px-8 py-3 rounded-lg font-medium transition-all duration-300 transform ${
                     inputMode === 'upload'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105 hover:shadow-xl'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-600/50 hover:scale-105'
                   }`}
                 >
                   📁 파일 업로드
@@ -183,41 +183,84 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Voice to Markdown
+        <header className="text-center mb-12">
+          <div className="mb-6">
+            <div className="inline-block p-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg mb-4">
+              <span className="text-2xl">🤖</span>
+            </div>
+          </div>
+          <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            AI 필기노트
           </h1>
-          <p className="text-gray-600">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
             음성을 녹음하거나 오디오 파일을 업로드하여 AI로 구조화된 Markdown 요약을 생성하세요
           </p>
           
-          {/* 현재 단계 표시 */}
-          <div className="mt-4">
-            <div className="inline-flex items-center space-x-4 text-sm">
-              <div className={`flex items-center ${currentStep === 'ready' ? 'text-blue-600' : currentStep !== 'ready' ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-3 h-3 rounded-full mr-2 ${currentStep === 'ready' ? 'bg-blue-600' : currentStep !== 'ready' ? 'bg-green-600' : 'bg-gray-400'}`} />
-                준비
+          {/* 현재 단계 표시 - 개선된 프로그레스 바 스타일 */}
+          <div className="mt-8">
+            <div className="flex justify-center items-center space-x-8">
+              <div className="flex items-center">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                  currentStep === 'ready' 
+                    ? 'bg-blue-500 border-blue-500 text-white shadow-lg' 
+                    : currentStep !== 'ready' 
+                    ? 'bg-green-500 border-green-500 text-white' 
+                    : 'border-gray-600 text-gray-400'
+                }`}>
+                  {currentStep !== 'ready' ? '✓' : '1'}
+                </div>
+                <span className={`ml-3 font-medium ${
+                  currentStep === 'ready' ? 'text-blue-400' : currentStep !== 'ready' ? 'text-green-400' : 'text-gray-500'
+                }`}>준비</span>
               </div>
-              <div className={`flex items-center ${currentStep === 'processing' ? 'text-blue-600' : currentStep === 'completed' ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-3 h-3 rounded-full mr-2 ${currentStep === 'processing' ? 'bg-blue-600' : currentStep === 'completed' ? 'bg-green-600' : 'bg-gray-400'}`} />
-                처리
+              
+              <div className={`w-12 h-0.5 ${
+                currentStep === 'processing' || currentStep === 'completed' ? 'bg-blue-500' : 'bg-gray-600'
+              }`} />
+              
+              <div className="flex items-center">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                  currentStep === 'processing' 
+                    ? 'bg-blue-500 border-blue-500 text-white shadow-lg animate-pulse' 
+                    : currentStep === 'completed' 
+                    ? 'bg-green-500 border-green-500 text-white' 
+                    : 'border-gray-600 text-gray-400'
+                }`}>
+                  {currentStep === 'completed' ? '✓' : currentStep === 'processing' ? '⟳' : '2'}
+                </div>
+                <span className={`ml-3 font-medium ${
+                  currentStep === 'processing' ? 'text-blue-400' : currentStep === 'completed' ? 'text-green-400' : 'text-gray-500'
+                }`}>처리</span>
               </div>
-              <div className={`flex items-center ${currentStep === 'completed' ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-3 h-3 rounded-full mr-2 ${currentStep === 'completed' ? 'bg-green-600' : 'bg-gray-400'}`} />
-                완료
+              
+              <div className={`w-12 h-0.5 ${
+                currentStep === 'completed' ? 'bg-green-500' : 'bg-gray-600'
+              }`} />
+              
+              <div className="flex items-center">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                  currentStep === 'completed' 
+                    ? 'bg-green-500 border-green-500 text-white shadow-lg' 
+                    : 'border-gray-600 text-gray-400'
+                }`}>
+                  {currentStep === 'completed' ? '✓' : '3'}
+                </div>
+                <span className={`ml-3 font-medium ${
+                  currentStep === 'completed' ? 'text-green-400' : 'text-gray-500'
+                }`}>완료</span>
               </div>
             </div>
           </div>
         </header>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-700/50 p-8 hover:shadow-2xl transition-all duration-300">
           {renderContent()}
         </div>
         
         {/* 푸터 */}
-        <footer className="text-center mt-8 text-sm text-gray-500">
+        <footer className="text-center mt-8 text-sm text-gray-400">
           <p>Powered by Whisper + Llama 3.1 8B</p>
           <p className="mt-1">🎤 음성/📁 파일 → 📝 텍스트 → 🤖 AI 요약 → 📋 Markdown</p>
         </footer>

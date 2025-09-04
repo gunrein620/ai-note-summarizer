@@ -102,18 +102,18 @@ const FileUploader = ({ onFileUpload, disabled = false }) => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* 드래그앤 드롭 영역 */}
+    <div className="space-y-8">
+      {/* 드래그앤 드롭 영역 - 개선된 디자인 */}
       <div
-        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 transform ${
           dragActive
-            ? 'border-blue-500 bg-blue-50'
+            ? 'border-blue-400 bg-gradient-to-br from-blue-900/30 to-purple-900/30 scale-105 shadow-lg shadow-blue-500/20'
             : selectedFile
-            ? 'border-green-500 bg-green-50'
+            ? 'border-green-400 bg-gradient-to-br from-green-900/30 to-emerald-900/30 shadow-lg shadow-green-500/20'
             : fileError
-            ? 'border-red-500 bg-red-50'
-            : 'border-gray-300 hover:border-gray-400'
-        } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+            ? 'border-red-400 bg-gradient-to-br from-red-900/30 to-pink-900/30 shadow-lg shadow-red-500/20'
+            : 'border-gray-600 bg-gradient-to-br from-gray-800/50 to-gray-700/50 hover:border-purple-400 hover:bg-gradient-to-br hover:from-blue-900/30 hover:to-purple-900/30 hover:scale-102 hover:shadow-xl hover:shadow-purple-500/20'
+        } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} shadow-md`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -129,56 +129,56 @@ const FileUploader = ({ onFileUpload, disabled = false }) => {
           disabled={disabled}
         />
 
-        <div className="space-y-4">
-          {/* 아이콘 */}
-          <div className="mx-auto w-16 h-16 flex items-center justify-center">
+        <div className="space-y-6">
+          {/* 아이콘 - 개선된 크기와 스타일 */}
+          <div className="mx-auto w-20 h-20 flex items-center justify-center">
             {selectedFile ? (
-              <div className="text-4xl text-green-500">📎</div>
+              <div className="text-6xl animate-bounce">📎</div>
             ) : fileError ? (
-              <div className="text-4xl text-red-500">❌</div>
+              <div className="text-6xl animate-pulse">❌</div>
             ) : dragActive ? (
-              <div className="text-4xl text-blue-500">📁</div>
+              <div className="text-6xl animate-bounce text-blue-500">📁</div>
             ) : (
-              <div className="text-4xl text-gray-400">🎵</div>
+              <div className="text-6xl text-gray-500 group-hover:scale-110 transition-transform duration-300">🎵</div>
             )}
           </div>
 
           {/* 메시지 */}
           <div>
             {selectedFile ? (
-              <div>
-                <div className="text-lg font-medium text-green-700">
-                  파일 선택됨
+              <div className="space-y-2">
+                <div className="text-xl font-bold text-green-400">
+                  ✅ 파일 선택됨
                 </div>
-                <div className="text-sm text-green-600 mt-1">
+                <div className="text-lg text-green-300 font-medium truncate max-w-md mx-auto">
                   {selectedFile.name}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-sm text-gray-200 bg-green-900/50 px-3 py-1 rounded-full inline-block border border-green-600/30">
                   {formatFileSize(selectedFile.size)}
                 </div>
               </div>
             ) : fileError ? (
-              <div>
-                <div className="text-lg font-medium text-red-700">
-                  파일 업로드 오류
+              <div className="space-y-2">
+                <div className="text-xl font-bold text-red-400">
+                  ❌ 파일 업로드 오류
                 </div>
-                <div className="text-sm text-red-600 mt-1">
+                <div className="text-sm text-red-300 bg-red-900/50 px-4 py-2 rounded-lg max-w-md mx-auto border border-red-600/30">
                   {fileError}
                 </div>
               </div>
             ) : dragActive ? (
-              <div className="text-lg font-medium text-blue-700">
-                파일을 여기에 놓으세요
+              <div className="text-xl font-bold text-blue-400 animate-pulse">
+                📁 파일을 여기에 놓으세요
               </div>
             ) : (
-              <div>
-                <div className="text-lg font-medium text-gray-700">
-                  오디오 파일을 드래그하거나 클릭하여 선택
+              <div className="space-y-3">
+                <div className="text-xl font-bold text-gray-300">
+                  🎵 오디오 파일을 드래그하거나 클릭하여 선택
                 </div>
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-gray-300 bg-gray-700/50 px-4 py-2 rounded-lg inline-block border border-gray-600/30">
                   지원 형식: MP3, WAV, WEBM, M4A, AAC, OGG, FLAC
                 </div>
-                <div className="text-xs text-gray-400 mt-1">
+                <div className="text-xs text-gray-400">
                   최대 파일 크기: 100MB
                 </div>
               </div>
@@ -187,16 +187,16 @@ const FileUploader = ({ onFileUpload, disabled = false }) => {
         </div>
       </div>
 
-      {/* 액션 버튼들 */}
+      {/* 액션 버튼들 - 개선된 디자인 */}
       {selectedFile && (
-        <div className="flex gap-3 justify-center">
+        <div className="flex gap-4 justify-center">
           <button
             onClick={handleUpload}
             disabled={disabled}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+            className={`px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform ${
               disabled
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600 text-white'
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95'
             }`}
           >
             📤 처리 시작
@@ -205,17 +205,17 @@ const FileUploader = ({ onFileUpload, disabled = false }) => {
           <button
             onClick={clearFile}
             disabled={disabled}
-            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+            className="px-8 py-4 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
           >
             🗑️ 파일 제거
           </button>
         </div>
       )}
 
-      {/* 안내 메시지 */}
+      {/* 안내 메시지 - 다크 테마 */}
       {!selectedFile && !fileError && (
-        <div className="text-center text-sm text-gray-500">
-          <p>💡 팁: 음성 파일을 직접 드래그해서 넣으시거나 위 영역을 클릭하여 파일을 선택하세요</p>
+        <div className="text-center bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-4 rounded-xl border border-blue-600/30">
+          <p className="text-blue-300 font-medium">💡 팁: 음성 파일을 직접 드래그해서 넣으시거나 위 영역을 클릭하여 파일을 선택하세요</p>
         </div>
       )}
     </div>

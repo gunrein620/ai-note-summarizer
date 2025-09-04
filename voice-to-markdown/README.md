@@ -9,6 +9,7 @@ conda activate voice-to-markdown
 ### 🎯 **서버 실행**
 ```bash
 # 2. 루트 디렉토리에서 한 번에 모든 서버 시작
+이건 내 루트디렉토리 -> (~/w/AI-note/voice-to-markdown)
 cd voice-to-markdown
 npm start
 ```
